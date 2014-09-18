@@ -17,19 +17,21 @@ class Hits(Base):
     __tablename__ = 'hits'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    person = relationship(User)
+    user = relationship(User)
     hits = Column(Integer)
 
 class Times(Base):
     __tablename__ = 'times'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    person = relationship(User)
-    times = Column(Integer)
+    user = relationship(User)
+    time = Column(Integer)
 
-# Create the engine (simple sqlalchemy db for now)
-# TODO: Make this customizable etc etc.
-engine = create_engine('sqlite:///database.db')
+if __name__ == "__main__":
 
-# Create all tables.
-Base.metadata.create_all(engine)
+    # Create the engine (simple sqlalchemy db for now)
+    # TODO: Make this customizable etc etc.
+    engine = create_engine('sqlite:///database.db')
+
+    # Create all tables.
+    Base.metadata.create_all(engine)
