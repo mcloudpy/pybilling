@@ -1,16 +1,71 @@
-from flask import Flask, render_template
+import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import datetime
+from flask import Flask, render_template, request, Response
+
+import dateutil.parser
+
+# Initialize Flask
+from models import Base, Hits, User
 
 app = Flask(__name__)
+app.config["DEBUG"] = True
 app.config.from_object(__name__)
+
+# Initialize SQLA
+_db_eng = create_engine("sqlite:///database.db")
+Base.metadata.bind = _db_eng
+db = sessionmaker(bind=_db_eng)
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+@app.route("/ajax/users/new/<name>")
+def create_new_user(name):
+    s = db()
+    u = User(name=name)
+    s.add(u)
+    s.commit()
+    return "New user: %s" % u.id
+
+@app.route("/ajax/hits/new/<uid>")
+def new_hits(uid):
+    s = db()
+    u = Hits(hits=1, user_id=uid)
+    s.add(u)
+    s.commit()
+    return "Done"
 
 @app.route("/ajax/hits/<uid>")
 def hits(uid):
-    return ""
+    from_dt = request.values.get("from")
+    to_dt = request.values.get("to")
+
+    if from_dt is not None:
+        from_dt = dateutil.parser.parse(from_dt)
+    else:
+        from_dt = datetime.datetime.utcfromtimestamp(0)
+
+    if to_dt is not None:
+        to_dt = dateutil.parser.parse(to_dt)
+    else:
+        to_dt = datetime.datetime.utcnow()
+
+
+    # Retrieve hits from DB but filtering by the from and to dates.
+    s = db()
+    hits = s.query(Hits).filter(Hits.user_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
+
+    data = []
+    for h in hits:
+        data.append({"hits": h.hits, "user_id": h.user_id, "ts": h.ts.isoformat()})
+
+    hits_str = json.dumps(data)
+
+    return Response(hits_str, mimetype="application/json")
 
 
 if __name__ == '__main__':
