@@ -1,5 +1,5 @@
 from collections import defaultdict
-import dateutil
+import dateutil.parser
 import json
 import datetime
 from flask import Response, request
