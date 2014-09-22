@@ -41,10 +41,6 @@
 
             var values = [];
 
-            function days(num) {
-                return num * 60 * 60 * 1000 * 24
-            }
-
             $.each(data, function (ind, elem) {
                 values.push({
                     "x": Date.parse(elem["ts"]),
@@ -64,7 +60,7 @@
 {#                    {"x": d3.time.day.offset(new Date(), 4), "y":20}#}
 {#                ],#}
                 "values": values,
-                "key": "Line",
+                "key": "Hits",
                 "color": "#ff7f00"
             });
 
@@ -74,6 +70,7 @@
                 // Create the Line Chart nvd3 object.
                 var chart = nv.models.lineChart()
                                 .useInteractiveGuideline(false)
+                                .forceY([0]) // Start at 0
                         ;
 
                 chart.xAxis
@@ -85,7 +82,7 @@
 
                 chart.yAxis
                         .axisLabel('Voltage (v)')
-                        .tickFormat(d3.format('.02f'))
+                        //.tickFormat(d3.format('.02f'))
                 ;
 
 
