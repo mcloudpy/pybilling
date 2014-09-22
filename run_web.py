@@ -25,24 +25,6 @@ Base.metadata.bind = _db_eng
 db = sessionmaker(bind=_db_eng)
 
 
-# Mostly for debugging purposes, this snippet will print the site-map so that we can check
-# which methods we are routing.
-@app.route("/site-map")
-def site_map():
-    lines = []
-    for rule in app.url_map.iter_rules():
-        line = str(escape(repr(rule)))
-        lines.append(line)
-
-    ret = "<br>".join(lines)
-    return ret
-
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-
 @app.route("/ajax/users/new/<name>")
 def create_new_user(name):
     s = db()
@@ -160,4 +142,6 @@ def test():
 
 
 if __name__ == '__main__':
-    app.run()
+    #app.run()
+    from billingweb import flask_app
+    flask_app.run()
