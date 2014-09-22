@@ -82,7 +82,7 @@ def hits(uid):
         for hits in hits_md[mts]:
             h += hits["hits"]
 
-        print "MERGED HITS %d ON %r %r" % (h, mts.day, mts.month)
+        #print "MERGED HITS %d ON %r %r" % (h, mts.day, mts.month)
 
         data.append({"hits": h, "user_id": uid, "ts": mts.isoformat()})
 
