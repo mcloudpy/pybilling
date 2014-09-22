@@ -1,9 +1,111 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+
+
+{% block head %}
+    {{ super() }}
+
+    <style>
+
+        #chart svg {
+            height: 400px;
+        }
+
+    </style>
+
+
+    <div id="chart">
+        <svg></svg>
+    </div>
+
+
+{% endblock head %}
+
+
+
+
+{% block body %}
+
+{% endblock body %}
+
+
+
+{% block scripts %}
+    {{ super() }}
+
+    <script type="text/javascript">
+
+        $.getJSON("{{ url_for(".hits_test", uid=2) }}", function (data) {
+            console.log("GOT: ");
+            console.log(data);
+
+            var values = [];
+
+            function days(num) {
+                return num * 60 * 60 * 1000 * 24
+            }
+
+            $.each(data, function (ind, elem) {
+                values.push({
+                    "x": Date.parse(elem["ts"]),
+                    "y": elem["hits"]
+                });
+
+                console.log("Value: " + values[ind]["x"] + " | " + values[ind]["y"]);
+            });
+
+            // Build nvd3 data object.
+            var rdata = [];
+
+            rdata.push({
+{#                "values": [#}
+{#                    {"x": Date.now(), "y":2},#}
+{#                    {"x": d3.time.day.offset(new Date(), 2), "y":6},#}
+{#                    {"x": d3.time.day.offset(new Date(), 4), "y":20}#}
+{#                ],#}
+                "values": values,
+                "key": "Line",
+                "color": "#ff7f00"
+            });
+
+
+            nv.addGraph(function () {
+
+                // Create the Line Chart nvd3 object.
+                var chart = nv.models.lineChart()
+                                .useInteractiveGuideline(false)
+                        ;
+
+                chart.xAxis
+                        .axisLabel('Date')
+                        .tickFormat(function (d) {
+                            return d3.time.format('%b %d')(new Date(d));
+                        })
+                ;
+
+                chart.yAxis
+                        .axisLabel('Voltage (v)')
+                        .tickFormat(d3.format('.02f'))
+                ;
+
+
+                // Draw the chart on the SVG.
+                d3.select('#chart svg')
+                        .datum(rdata)
+                        .transition().duration(500)
+                        .call(chart)
+                ;
+
+                // Ensure we support working resizes etc.
+                nv.utils.windowResize(chart.update);
+
+                return chart;
+            });
+
+
+        });
+
+
+    </script>
+
+{% endblock scripts %}

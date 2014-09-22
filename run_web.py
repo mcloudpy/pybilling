@@ -2,13 +2,14 @@ import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import datetime
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, url_for
 
 import dateutil.parser
 
-# Initialize Flask
+from markupsafe._speedups import escape
 from models import Base, Hits, User
 
+# Initialize Flask
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config.from_object(__name__)
@@ -19,9 +20,23 @@ Base.metadata.bind = _db_eng
 db = sessionmaker(bind=_db_eng)
 
 
+# Mostly for debugging purposes, this snippet will print the site-map so that we can check
+# which methods we are routing.
+@app.route("/site-map")
+def site_map():
+    lines = []
+    for rule in app.url_map.iter_rules():
+        line = str(escape(repr(rule)))
+        lines.append(line)
+
+    ret = "<br>".join(lines)
+    return ret
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/ajax/users/new/<name>")
 def create_new_user(name):
@@ -31,6 +46,7 @@ def create_new_user(name):
     s.commit()
     return "New user: %s" % u.id
 
+
 @app.route("/ajax/hits/new/<uid>")
 def new_hits(uid):
     s = db()
@@ -38,6 +54,30 @@ def new_hits(uid):
     s.add(u)
     s.commit()
     return "Done"
+
+
+@app.route("/ajax/hits_test/<uid>")
+def hits_test(uid):
+    ret = [
+        {
+            "hits": 2,
+            "user_id": 2,
+            "ts": "2014-09-19T15:36:54.583331"
+        },
+        {
+            "hits": 4,
+            "user_id": 2,
+            "ts": "2014-09-20T15:36:54.583331"
+        },
+        {
+            "hits": 12,
+            "user_id": 2,
+            "ts": "2014-09-22T15:36:54.583331"
+        }
+    ]
+
+    return Response(json.dumps(ret), mimetype="application/json")
+
 
 @app.route("/ajax/hits/<uid>")
 def hits(uid):
@@ -66,6 +106,11 @@ def hits(uid):
     hits_str = json.dumps(data)
 
     return Response(hits_str, mimetype="application/json")
+
+
+@app.route("/test")
+def test():
+    return render_template("hits_chart.html")
 
 
 if __name__ == '__main__':
