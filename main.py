@@ -7,11 +7,12 @@ from sqlalchemy.orm import sessionmaker
 from billing import Billing
 from billing_3scale import ThreescaleBilling
 from billing_sqla import SqlaBilling
-from config import *
 from models import Base, User
 
+import config
 
-strat = ThreescaleBilling(threescale_provider_key, threescale_user_key)
+
+strat = ThreescaleBilling(config.threescale_provider_key, config.threescale_user_key)
 billing = Billing(strat)
 
 
@@ -21,7 +22,7 @@ billing.report_time(30)
 
 
 
-engine = create_engine('sqlite:///database.db')
+engine = create_engine(config.DATABASE_URI)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()

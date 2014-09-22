@@ -7,6 +7,8 @@ import datetime
 from time import strftime
 from flask import Flask, render_template, request, Response, url_for
 
+import config
+
 import dateutil.parser
 
 from markupsafe._speedups import escape
@@ -18,7 +20,7 @@ app.config["DEBUG"] = True
 app.config.from_object(__name__)
 
 # Initialize SQLA
-_db_eng = create_engine("sqlite:///database.db")
+_db_eng = create_engine(config.DATABASE_URI)
 Base.metadata.bind = _db_eng
 db = sessionmaker(bind=_db_eng)
 
