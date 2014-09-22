@@ -61,8 +61,10 @@
         } );
 
         $('body').on("click", ".btn", function (ev) {
-            var check = $(".btn-group >> input[checked]");
+            var check = $(ev.currentTarget).find("input");
             var id = check[0].id;
+
+            console.log("Chosen: " + id);
 
             var to_date = new Date().toISOString();
 
@@ -81,7 +83,7 @@
 
         function DrawHitsChart(from_date, to_date) {
 
-            $.getJSON("{{ url_for(".hits_test", uid=2, from=from_date, to=to_date) }}", function (data) {
+            $.getJSON("{{ url_for(".hits", uid=2) }}?to=" + to_date + "&from=" + from_date, function (data) {
                 console.log("GOT: ");
                 console.log(data);
 

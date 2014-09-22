@@ -1,7 +1,9 @@
 import json
+import random
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import datetime
+from time import strftime
 from flask import Flask, render_template, request, Response, url_for
 
 import dateutil.parser
@@ -107,6 +109,24 @@ def hits(uid):
 
     return Response(hits_str, mimetype="application/json")
 
+
+def daterange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days)):
+        yield start_date + datetime.timedelta(n)
+
+@app.route("/test/fill")
+def fill():
+
+    start_date = datetime.datetime(year=2014, month=1, day=1)
+    end_date = datetime.datetime(year=2015, month=1, day=1)
+    for single_date in daterange(start_date, end_date):
+        hits = random.randint(0, 15)
+        s = db()
+        u = Hits(hits=hits, user_id=2, ts=single_date)
+        s.add(u)
+        s.commit()
+
+    return "Ok"
 
 @app.route("/test")
 def test():
