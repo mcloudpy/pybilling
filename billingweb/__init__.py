@@ -1,22 +1,15 @@
-from billingweb.flask_app_builder import build_flask_app
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from flask import render_template
-from billing.models import Base, User, Hits
-import config
+
+from billingweb.flask_app_builder import build_flask_app
+from billing.models import User, Hits
+from sqla import db
 
 flask_app = build_flask_app()
-
-# Initialize SQLAlchemy
-_db_eng = create_engine(config.DATABASE_URI)
-Base.metadata.bind = _db_eng
-db = sessionmaker(bind=_db_eng)
 
 # Import the different flask_views. This needs to be exactly here because
 # otherwise the @flask_app notation wouldn't work.
 import view_index
 import ajax_hits
-
 
 
 
