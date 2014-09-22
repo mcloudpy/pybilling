@@ -3,8 +3,9 @@
 <head>
     <title></title>
 
-    {% block head %}
-    {% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/nv.d3.css") }}"/>
+{% endblock %}
 </head>
 <body>
 
@@ -12,6 +13,8 @@
 {% endblock %}
 
 {% block scripts %}
+    <script type="text/javascript" src="{{ url_for("static", filename="js/d3.js") }}"></script>
+    <script type="text/javascript" src="{{ url_for("static", filename="js/nv.d3.js") }}"></script>
 {% endblock %}
 </body>
 </html>
