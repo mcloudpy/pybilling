@@ -83,7 +83,7 @@
 
         function DrawHitsChart(from_date, to_date) {
 
-            $.getJSON("{{ url_for(".hits", uid=2) }}?to=" + to_date + "&from=" + from_date, function (data) {
+            $.getJSON("{{ url_for(".hits", uid=2) }}?to=" + to_date + "&from=" + from_date + "&daily=true", function (data) {
                 console.log("GOT: ");
                 console.log(data);
 

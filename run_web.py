@@ -1,3 +1,4 @@
+from collections import defaultdict
 import json
 import random
 from sqlalchemy import create_engine
@@ -101,9 +102,32 @@ def hits(uid):
     s = db()
     hits = s.query(Hits).filter(Hits.user_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
 
+    hits_md = defaultdict(list)
+
+    # Consider accumulating the hits for a period.
+    if request.values.get("daily") == "true":
+        for h in hits:
+            hits_n = h.hits
+            uid = h.user_id
+            ts = h.ts
+            ts = datetime.datetime(year=ts.year, month=ts.month, day=ts.day)
+            hits_md[ts].append({"hits": hits_n, "uid": uid})
+    else:
+        for h in hits:
+            hits_n = h.hits
+            uid = h.user_id
+            ts = h.ts
+            hits_md[ts].append({"hits": hits_n, "uid": uid})
+
     data = []
-    for h in hits:
-        data.append({"hits": h.hits, "user_id": h.user_id, "ts": h.ts.isoformat()})
+    for mts in sorted(hits_md):
+        h = 0
+        for hits in hits_md[mts]:
+            h += hits["hits"]
+
+        print "MERGED HITS %d ON %r %r" % (h, mts.day, mts.month)
+
+        data.append({"hits": h, "user_id": uid, "ts": mts.isoformat()})
 
     hits_str = json.dumps(data)
 
