@@ -5,6 +5,7 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/nv.d3.css") }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.min.css") }}"/>
 {% endblock %}
 </head>
 <body>
@@ -14,6 +15,7 @@
 
 {% block scripts %}
     <script type="text/javascript" src="{{ url_for("static", filename="js/jquery-2.1.1.min.js") }}"></script>
+    <script type="text/javascript" src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
     <script type="text/javascript" src="{{ url_for("static", filename="js/d3.js") }}"></script>
     <script type="text/javascript" src="{{ url_for("static", filename="js/nv.d3.js") }}"></script>
 {% endblock %}

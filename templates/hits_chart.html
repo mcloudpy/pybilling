@@ -14,17 +14,38 @@
     </style>
 
 
-    <div id="chart">
-        <svg></svg>
-    </div>
-
-
 {% endblock head %}
 
 
 
 
 {% block body %}
+
+    <h1>Hits Chart</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="options" id="btn-years" checked>Years
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="options" id="btn-months">Months
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="options" id="btn-days">Days
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="options" id="btn-hours">Hours
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div id="chart">
+        <svg></svg>
+    </div>
+
 
 {% endblock body %}
 
@@ -35,72 +56,99 @@
 
     <script type="text/javascript">
 
-        $.getJSON("{{ url_for(".hits_test", uid=2) }}", function (data) {
-            console.log("GOT: ");
-            console.log(data);
+        $(document).ready( function() {
+            $("#btn-days").click();
+        } );
 
-            var values = [];
+        $('body').on("click", ".btn", function (ev) {
+            var check = $(".btn-group >> input[checked]");
+            var id = check[0].id;
 
-            $.each(data, function (ind, elem) {
-                values.push({
-                    "x": Date.parse(elem["ts"]),
-                    "y": elem["hits"]
+            var to_date = new Date().toISOString();
+
+            var from_date = null;
+            if(id == "btn-hours")
+                from_date = d3.time.day.offset(new Date(), -1).toISOString();
+            else if(id == "btn-days")
+                from_date = d3.time.day.offset(new Date(), -7).toISOString();
+            else if(id == "btn-months")
+                from_date = d3.time.day.offset(new Date(), -3*30).toISOString();
+            else if(id == "btn-years")
+                from_date = d3.time.day.offset(new Date(), -12*30*3).toISOString();
+
+            DrawHitsChart(from_date, to_date)
+        });
+
+        function DrawHitsChart(from_date, to_date) {
+
+            $.getJSON("{{ url_for(".hits_test", uid=2, from=from_date, to=to_date) }}", function (data) {
+                console.log("GOT: ");
+                console.log(data);
+
+                var values = [];
+
+                $.each(data, function (ind, elem) {
+                    values.push({
+                        "x": Date.parse(elem["ts"]),
+                        "y": elem["hits"]
+                    });
+
+                    console.log("Value: " + values[ind]["x"] + " | " + values[ind]["y"]);
                 });
 
-                console.log("Value: " + values[ind]["x"] + " | " + values[ind]["y"]);
-            });
+                // Build nvd3 data object.
+                var rdata = [];
 
-            // Build nvd3 data object.
-            var rdata = [];
-
-            rdata.push({
-{#                "values": [#}
-{#                    {"x": Date.now(), "y":2},#}
-{#                    {"x": d3.time.day.offset(new Date(), 2), "y":6},#}
-{#                    {"x": d3.time.day.offset(new Date(), 4), "y":20}#}
-{#                ],#}
-                "values": values,
-                "key": "Hits",
-                "color": "#ff7f00"
-            });
+                rdata.push({
+                    {#                "values": [#}
+                    {#                    {"x": Date.now(), "y":2},#}
+                    {#                    {"x": d3.time.day.offset(new Date(), 2), "y":6},#}
+                    {#                    {"x": d3.time.day.offset(new Date(), 4), "y":20}#}
+                    {#                ],#}
+                    "values": values,
+                    "key": "Hits",
+                    "color": "#ff7f00"
+                });
 
 
-            nv.addGraph(function () {
+                nv.addGraph(function () {
 
-                // Create the Line Chart nvd3 object.
-                var chart = nv.models.lineChart()
-                                .useInteractiveGuideline(false)
-                                .forceY([0]) // Start at 0
-                        ;
+                    // Create the Line Chart nvd3 object.
+                    var chart = nv.models.lineChart()
+                                    .useInteractiveGuideline(false)
+                                    .forceY([0]) // Start at 0
+                            ;
 
-                chart.xAxis
-                        .axisLabel('Date')
-                        .tickFormat(function (d) {
-                            return d3.time.format('%b %d')(new Date(d));
-                        })
-                ;
+                    chart.xAxis
+                            .axisLabel('Date')
+                            .tickFormat(function (d) {
+                                return d3.time.format('%b %d')(new Date(d));
+                            })
+                    ;
 
-                chart.yAxis
-                        .axisLabel('Voltage (v)')
+                    chart.yAxis
+                            .axisLabel('Voltage (v)')
                         //.tickFormat(d3.format('.02f'))
-                ;
+                    ;
 
 
-                // Draw the chart on the SVG.
-                d3.select('#chart svg')
-                        .datum(rdata)
-                        .transition().duration(500)
-                        .call(chart)
-                ;
+                    // Draw the chart on the SVG.
+                    d3.select('#chart svg')
+                            .datum(rdata)
+                            .transition().duration(500)
+                            .call(chart)
+                    ;
 
-                // Ensure we support working resizes etc.
-                nv.utils.windowResize(chart.update);
+                    // Ensure we support working resizes etc.
+                    nv.utils.windowResize(chart.update);
 
-                return chart;
-            });
+                    return chart;
+                }); //!
 
 
-        });
+            }); //! getJSON
+
+        } //! DrawHitsChart
 
 
     </script>
