@@ -4,10 +4,10 @@
 # Report usage with ThreeScale
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from billing import Billing
-from billing_3scale import ThreescaleBilling
-from billing_sqla import SqlaBilling
-from models import Base, User
+from billing.billing import Billing
+from billing.billing_3scale import ThreescaleBilling
+from billing.billing_sqla import SqlaBilling
+from billing.models import Base, User
 
 import config
 

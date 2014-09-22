@@ -1,5 +1,4 @@
 import ThreeScalePY
-import sys
 from billing import BillingException
 
 

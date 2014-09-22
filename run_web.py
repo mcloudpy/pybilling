@@ -6,13 +6,13 @@ from sqlalchemy.orm import sessionmaker
 import datetime
 from time import strftime
 from flask import Flask, render_template, request, Response, url_for
+from billing.models import Base, User, Hits
 
 import config
 
 import dateutil.parser
 
 from markupsafe._speedups import escape
-from models import Base, Hits, User
 
 # Initialize Flask
 app = Flask(__name__)

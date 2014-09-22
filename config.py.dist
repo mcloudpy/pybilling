@@ -1,0 +1,10 @@
+
+
+
+threescale_provider_key = ''
+threescale_user_key = ''
+
+
+
+DATABASE_URI = "sqlite:///database.db"
+TEST_DATABASE_URI = "sqlite:///test_database.db"
