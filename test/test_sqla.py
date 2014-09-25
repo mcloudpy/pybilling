@@ -69,16 +69,3 @@ class Test3Scale:
         assert times is not None
         assert len(times) == 1
         assert times[0].time == 60
-
-    # def test_create_application(self):
-    #     app = create_application(config.threescale_admin_server, config.threescale_provider_key, config.threescale_account_id, config.threescale_plan_id, "Test App", "Test App Description")
-    #     assert app is not None
-
-
-
-    # Create the engine (simple sqlalchemy db for now)
-    # TODO: Make this customizable etc etc.
-    engine = create_engine('sqlite:///database.db')
-
-    # Create all tables.
-    Base.metadata.create_all(engine)

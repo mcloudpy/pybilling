@@ -1,9 +1,23 @@
 
 
 
+# The URL to the admin-server that 3scale provides.
+threescale_admin_server = 'https://<something>.3scale.net'
+
+# Identifies the Provider (which basically identifies the specific server).
 threescale_provider_key = ''
+
+# Identifies A SPECIFIC application. Through this variable this particular configuration instance will thus
+# be ready to report hits and times for a SPECIFIC application. If a new Application is created (which this
+# API supports too) it will have its own user_key.
 threescale_user_key = ''
 
+# Identifies the Account to create new Applications through.
+threescale_account_id = ''
+
+# Identifies the PLAN that will be applied to the new Applications.
+threescale_plan_id = ''
 
 
+# For the SQLA scheme.
 DATABASE_URI = "sqlite:///database.db"
