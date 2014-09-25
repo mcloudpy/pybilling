@@ -1,5 +1,5 @@
 import unittest
-from billing.billing_3scale import ThreescaleBilling
+from billing.billing_3scale import ThreescaleBilling, create_application
 from billingweb import flask_app as app
 import config
 
@@ -28,3 +28,6 @@ class Test3Scale:
     def test_report_time(self):
         api = ThreescaleBilling(config.threescale_provider_key, config.threescale_user_key)
         api.report_time(20)
+
+    def test_create_application(self):
+        app = create_application(config.threescale_admin_server, config.threescale_provider_key, config.threescale_account_id, config.threescale_plan_id, "Test App", "Test App Description")
