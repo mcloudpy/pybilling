@@ -1,4 +1,5 @@
-from run_web import app
+import unittest
+from billingweb import flask_app as app
 
 
 class TestHits:
