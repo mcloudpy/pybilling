@@ -1,7 +1,7 @@
 from flask import render_template
 
 from billingweb.flask_app_builder import build_flask_app
-from billing.models import User, Hits
+from billing.models import Application, Hits
 from sqla import db
 
 flask_app = build_flask_app()
@@ -22,7 +22,7 @@ import datetime
 @flask_app.route("/ajax/users/new/<name>")
 def create_new_user(name):
     s = db()
-    u = User(name=name)
+    u = Application(name=name)
     s.add(u)
     s.commit()
     return "New user: %s" % u.id

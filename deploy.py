@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from billing.billing import Billing
 from billing.billing_3scale import ThreescaleBilling
 from billing.billing_sqla import SqlaBilling
-from billing.models import Base, User
+from billing.models import Base, Application
 
 import config
 
@@ -27,13 +27,13 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-user = User(name="TestUser")
+user = Application(name="TestUser")
 session.add(user)
 session.commit()
 id = user.id
 print id
 
-strat = SqlaBilling(id)
+strat = SqlaBilling(config.DATABASE_URI, id)
 billing = Billing(strat)
 
 billing.report_hits(1)

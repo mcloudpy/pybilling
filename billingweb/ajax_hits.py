@@ -57,7 +57,7 @@ def hits(uid):
 
     # Retrieve hits from DB but filtering by the from and to dates.
     s = db()
-    hits = s.query(Hits).filter(Hits.user_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
+    hits = s.query(Hits).filter(Hits.app_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
 
     hits_md = defaultdict(list)
 

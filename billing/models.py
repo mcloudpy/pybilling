@@ -9,26 +9,27 @@ import datetime
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = 'user'
+class Application(Base):
+    __tablename__ = 'application'
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    description = Column(String(500), nullable=False)
 
 class Hits(Base):
     __tablename__ = 'hits'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
+    app_id = Column(Integer, ForeignKey('application.id'))
     hits = Column(Integer)
     ts = Column(DateTime, default=datetime.datetime.utcnow)
-    user = relationship(User)
+    app = relationship(Application)
 
 class Times(Base):
     __tablename__ = 'times'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
+    app_id = Column(Integer, ForeignKey('application.id'))
     time = Column(Integer)
     ts = Column(DateTime, default=datetime.datetime.utcnow)
-    user = relationship(User)
+    app = relationship(Application)
 
 if __name__ == "__main__":
 

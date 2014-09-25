@@ -1,15 +1,13 @@
-import unittest
 from billing.billing_3scale import ThreescaleBilling, create_application
-from billingweb import flask_app as app
 import config
 
 
 class Test3Scale:
     def __init__(self):
-        self.flask_app = None
+        pass
 
     def setUp(self):
-        self.flask_app = app.test_client()
+        pass
 
     def tearDown(self):
         pass
@@ -31,3 +29,4 @@ class Test3Scale:
 
     def test_create_application(self):
         app = create_application(config.threescale_admin_server, config.threescale_provider_key, config.threescale_account_id, config.threescale_plan_id, "Test App", "Test App Description")
+        assert app is not None
