@@ -5,10 +5,12 @@ from billing.models import Application, Hits
 from sqla import db
 
 flask_app = build_flask_app()
+flask_app.config.from_pyfile("../config.py")
 
 # Import the different flask_views. This needs to be exactly here because
 # otherwise the @flask_app notation wouldn't work.
 import view_index
+import view_install
 import ajax_hits
 
 
