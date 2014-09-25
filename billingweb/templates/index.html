@@ -1,5 +1,28 @@
 {% extends "base.html" %}
 
 {% block body %}
-Welcome to PyBilling
+
+    <div class="container">
+
+        <row>
+            <div class="col-sm-6 col-sm-offset-3">
+                <p>
+                    The Database seems to be properly installed.
+                    Welcome to PyBilling!
+                </p>
+            </div>
+        </row>
+
+
+
+        <row>
+            <div class="col-sm-2 col-sm-offset-5">
+                <a href="{{ url_for("test") }}" class="btn btn-success">View Analytics</a>
+            </div>
+        </row>
+    </div>
+
+
+
+
 {% endblock %}
