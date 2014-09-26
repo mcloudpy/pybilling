@@ -114,34 +114,20 @@ def hits(uid):
 
     # Retrieve hits from DB but filtering by the from and to dates.
     s = sqla.db()
-    hits = s.query(Hits).filter(Hits.app_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
-
-    hits_md = defaultdict(list)
+    hits_list = s.query(Hits).filter(Hits.app_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
 
     # Consider accumulating the hits for a period.
-    if request.values.get("daily") == "true":
-        for h in hits:
-            hits_n = h.hits
-            uid = h.app_id
-            ts = h.ts
-            ts = datetime.datetime(year=ts.year, month=ts.month, day=ts.day)
-            hits_md[ts].append({"hits": hits_n, "uid": uid})
-    else:
-        for h in hits:
-            hits_n = h.hits
-            uid = h.app_id
-            ts = h.ts
-            hits_md[ts].append({"hits": hits_n, "uid": uid})
+    if granularity is not None:
+        hits_dict = accumulate_hits(hits_list, granularity)
+        # Convert the dictionary to an actual list.
+        hits_list = [hits_dict[t] for t in hits_dict]
 
     data = []
-    for mts in sorted(hits_md):
-        h = 0
-        for hits in hits_md[mts]:
-            h += hits["hits"]
+    for h in hits_list:
+        data.append({"hits": h.hits, "user_id": h.app_id, "ts": h.ts.isoformat()})
 
-        #print "MERGED HITS %d ON %r %r" % (h, mts.day, mts.month)
-
-        data.append({"hits": h, "user_id": uid, "ts": mts.isoformat()})
+    # Sort the list.
+    data = sorted(data, key=lambda h: h["ts"])
 
     hits_str = json.dumps(data)
 

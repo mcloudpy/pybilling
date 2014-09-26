@@ -1,3 +1,4 @@
+import json
 import os
 import datetime
 from sqlalchemy import create_engine
@@ -38,6 +39,39 @@ class TestAjax:
         """
         ret = self.flask_app.get("/")
         assert ret.status_code == 200 or ret.status_code == 302
+
+    def test_ajax_call(self):
+        """
+        Check the AJAX call itself.
+        """
+        ts1 = datetime.datetime(year=2014, month=2, day=1)
+        ts2 = datetime.datetime(year=2014, month=2, day=2)
+        ts3 = datetime.datetime(year=2014, month=3, day=2)
+
+        original_hits = [
+            Hits(ts=ts1, hits=5, app_id=2),
+            Hits(ts=ts2, hits=6, app_id=2),
+            Hits(ts=ts3, hits=8, app_id=2)
+        ]
+
+        s = sqla.db()
+        for h in original_hits:
+            s.add(h)
+        s.commit()
+
+        ret = self.flask_app.get("/ajax/hits/2?granularity=monthly")
+        assert ret.status_code == 200
+
+        resp = json.loads(ret.data)
+
+        h1 = resp[0]
+        h2 = resp[1]
+
+        print resp
+
+        assert h1["hits"] == 11
+        assert h2["hits"] == 8
+
 
     def test_accumulate_hits_monthly(self):
         """
@@ -93,7 +127,7 @@ class TestAjax:
         h2 = accumulated[s[1]]
 
         assert h1.hits == 6  # 5+6
-        assert h2.hits == 13   
+        assert h2.hits == 13
 
     def test_hits_add(self):
         """
