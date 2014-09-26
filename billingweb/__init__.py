@@ -1,5 +1,5 @@
 import dateutil.parser
-from flask import render_template, request, flash, session
+from flask import render_template, request, flash, session, redirect, url_for
 
 from billingweb.flask_app_builder import build_flask_app
 from billing.models import Application, Hits
@@ -51,6 +51,42 @@ def fill():
     return "Ok"
 
 
+@flask_app.route("/test/addapp", methods=["GET", "POST"])
+def addapp():
+
+    # Retrieve the list of existing applications.
+    s = db()
+    applications = s.query(Application).all()
+
+    if request.method == "POST":
+
+        # Read the input.
+
+        name = request.values.get("name")
+        if name is None:
+            flash("Please, provide an application name", "error")
+            return render_template("add_app.html", applications=applications)
+
+        description = request.values.get("description")
+        if description is None:
+            flash("Please, provide an application description", "error")
+            return render_template("add_app.html", applications=applications)
+
+        # Add the specified app itself.
+
+        app = Application(name=name, description=description)
+        s.add(app)
+        s.commit()
+
+        appid = app.id
+
+        flash("The specified app has been added with ID: %r" % appid, "success")
+
+        return redirect(url_for("addapp"))
+
+    return render_template("add_app.html", applications=applications)
+
+
 @flask_app.route("/test/addhits", methods=["GET", "POST"])
 def addhits():
     if request.method == "POST":
@@ -88,7 +124,7 @@ def addhits():
         s.commit()
 
         flash("The specified hits have been added", "success")
-        return render_template("add_hits.html")
+        return redirect(url_for("addhits"))
 
     return render_template("add_hits.html")
 
