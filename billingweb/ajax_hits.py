@@ -40,10 +40,66 @@ def hits_test(uid):
     return Response(json.dumps(ret), mimetype="application/json")
 
 
+def accumulate_hits(hits, granularity):
+    """
+    Accumulates the specified hits according to the specified granularity.
+
+    @param hits: List of hits, with any time.
+    @param granularity: yearly, monthly, weekly, daily or hourly
+
+    Returns a simple dictionary of (accumulated) Hits, linked to the rounded timestamps.
+    """
+
+    # Dictionary to store the hits organized by their granularity.
+    hits_by_granularity = defaultdict(list)
+
+    # Define the adaptors for each granularity
+    if granularity == "yearly":
+        adapt = lambda t: datetime.datetime(year=t.year, month=1, day=1)
+    elif granularity == "monthly":
+        adapt = lambda t: datetime.datetime(year=t.year, month=t.month, day=1)
+    elif granularity == "weekly":
+        # NOT YET SUPPORTED. TODO.
+        adapt = None
+        pass
+    elif granularity == "daily":
+        adapt = lambda t: datetime.datetime(year=t.year, month=t.month, day=t.day)
+    elif granularity == "hourly":
+        adapt = lambda t: datetime.datetime(year=t.year, month=t.month, day=t.day, hour=t.hour)
+    else:
+        raise Exception("Unknown granularity specified")
+
+    for h in hits:
+        # Round the detailed ts to the granularity, so that no matter what
+        # the sub-granularity unit, they compare equally.
+        ts = adapt(h.ts)
+
+        # Add the rounded hit to the dictionary, using the rounded ts as the key.
+        hits_by_granularity[ts].append({"hits": h.hits, "uid": h.app_id})
+
+
+    # Add up all the hits within the same granular date, to form a new simple dictionary.
+    accumulated_hits = {}
+
+    for ts, hits_list in hits_by_granularity.iteritems():
+        hits_number = 0
+        for h in hits_list:
+            hits_number += h["hits"]
+        appid = hits_list[0]["uid"]  # Just get the app_id of one of them.
+
+        hits = Hits(hits=hits_number, ts=ts, app_id=appid)
+        accumulated_hits[ts] = hits
+
+    return accumulated_hits
+
+
 @flask_app.route("/ajax/hits/<uid>")
 def hits(uid):
     from_dt = request.values.get("from")
     to_dt = request.values.get("to")
+
+    # The granularity can be: daily, yearly, monthly, weekly, hourly
+    granularity = request.values.get("granularity")
 
     if from_dt is not None:
         from_dt = dateutil.parser.parse(from_dt)

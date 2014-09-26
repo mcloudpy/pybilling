@@ -1,12 +1,14 @@
 import os
+import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from billing.models import Base, Hits, Application
 from billingweb import flask_app as app
 from billingweb import sqla
+from billingweb.ajax_hits import accumulate_hits
 
 
-class TestTestAdds:
+class TestAjax:
     def __init__(self):
         self.flask_app = None
 
@@ -37,12 +39,61 @@ class TestTestAdds:
         ret = self.flask_app.get("/")
         assert ret.status_code == 200 or ret.status_code == 302
 
-    def test_injected_test_database(self):
-        # If the tables don't exist exceptions will be raised.
-        sqla._db_eng.execute("SELECT 1 FROM Application")
-        sqla._db_eng.execute("SELECT 1 FROM Hits")
-        sqla._db_eng.execute("SELECT 1 FROM Times")
-        sqla._db_eng.execute("INSERT INTO hits VALUES (5, 5, 5, 5)")
+    def test_accumulate_hits_monthly(self):
+        """
+        Test that the accumulate hits function works as expected for monthly hits.
+        """
+        ts1 = datetime.datetime(year=2014, month=2, day=1)
+        ts2 = datetime.datetime(year=2014, month=2, day=2)
+        ts3 = datetime.datetime(year=2014, month=3, day=2)
+
+        original_hits = [
+            Hits(ts=ts1, hits=5, app_id=2),
+            Hits(ts=ts2, hits=6, app_id=2),
+            Hits(ts=ts3, hits=8, app_id=2)
+        ]
+
+        # If using a monthly granularity, hits 1 and 2 should be accumulated, hits 2 not.
+
+        accumulated = accumulate_hits(original_hits, "monthly")
+
+        assert len(accumulated) == 2
+
+        s = sorted(accumulated)
+
+        h1 = accumulated[s[0]]
+        h2 = accumulated[s[1]]
+
+        assert h1.hits == 11  # 5+6
+        assert h2.hits == 8
+
+    def test_accumulate_hits_yearly(self):
+        """
+        Test that the accumulate hits function works as expected for monthly hits.
+        """
+        ts1 = datetime.datetime(year=2014, month=5, day=1)
+        ts2 = datetime.datetime(year=2013, month=2, day=2)
+        ts3 = datetime.datetime(year=2014, month=3, day=2)
+
+        original_hits = [
+            Hits(ts=ts1, hits=5, app_id=2),
+            Hits(ts=ts2, hits=6, app_id=2),
+            Hits(ts=ts3, hits=8, app_id=2)
+        ]
+
+        # If using a yearly granularity, hits 1 and 3 should be accumulated, hits 2 not.
+
+        accumulated = accumulate_hits(original_hits, "yearly")
+
+        assert len(accumulated) == 2
+
+        s = sorted(accumulated)
+
+        h1 = accumulated[s[0]]
+        h2 = accumulated[s[1]]
+
+        assert h1.hits == 6  # 5+6
+        assert h2.hits == 13   
 
     def test_hits_add(self):
         """
