@@ -19,7 +19,6 @@ class Test3Scale:
         # Create the sqlalchemy engine and the db itself.
         self.engine = create_engine(self.test_database_uri)
         Base.metadata.create_all(self.engine)
-
         self.smaker = sessionmaker(self.engine)
 
     def tearDown(self):

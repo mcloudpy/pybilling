@@ -4,12 +4,13 @@ import json
 import datetime
 from flask import Response, request
 from billing.models import Hits
-from billingweb import flask_app, db
+from billingweb import flask_app
+import sqla
 
 
 @flask_app.route("/ajax/hits/new/<uid>")
 def new_hits(uid):
-    s = db()
+    s = sqla.db()
     u = Hits(hits=1, user_id=uid)
     s.add(u)
     s.commit()
@@ -56,7 +57,7 @@ def hits(uid):
 
 
     # Retrieve hits from DB but filtering by the from and to dates.
-    s = db()
+    s = sqla.db()
     hits = s.query(Hits).filter(Hits.app_id == uid, Hits.ts <= to_dt, Hits.ts >= from_dt).all()
 
     hits_md = defaultdict(list)

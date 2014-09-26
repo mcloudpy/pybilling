@@ -7,4 +7,4 @@ import config
 
 _db_eng = create_engine(config.DATABASE_URI)
 Base.metadata.bind = _db_eng
-db = sessionmaker(bind=_db_eng)
+db = sessionmaker(_db_eng)

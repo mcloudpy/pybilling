@@ -3,7 +3,7 @@ from flask import render_template, request, flash, session, redirect, url_for
 
 from billingweb.flask_app_builder import build_flask_app
 from billing.models import Application, Hits
-from sqla import db
+import sqla
 
 flask_app = build_flask_app()
 flask_app.config.from_pyfile("../config.py")
@@ -25,7 +25,7 @@ import datetime
 
 @flask_app.route("/ajax/users/new/<name>")
 def create_new_user(name):
-    s = db()
+    s = sqla.db()
     u = Application(name=name)
     s.add(u)
     s.commit()
@@ -43,7 +43,7 @@ def fill():
     end_date = datetime.datetime(year=2015, month=1, day=1)
     for single_date in daterange(start_date, end_date):
         hits = random.randint(0, 15)
-        s = db()
+        s = sqla.db()
         u = Hits(hits=hits, user_id=2, ts=single_date)
         s.add(u)
         s.commit()
@@ -55,7 +55,7 @@ def fill():
 def addapp():
 
     # Retrieve the list of existing applications.
-    s = db()
+    s = sqla.db()
     applications = s.query(Application).all()
 
     if request.method == "POST":
@@ -119,7 +119,10 @@ def addhits():
 
         appid = 2  # TODO: To be made dynamic in the future.
         hits = Hits(ts=isodate, hits=hits, app_id=appid)
-        s = db()
+
+        # WARNING: Doing db() only results in issues from the tests when we
+        # modify the DB. TODO: A better method for testing.
+        s = sqla.db()
         s.add(hits)
         s.commit()
 
@@ -132,3 +135,4 @@ def addhits():
 @flask_app.route("/test")
 def test():
     return render_template("hits_chart.html")
+
