@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+
+
+{% block head %}
+    {{ super() }}
+{% endblock head %}
+
+
+
+
+{% block body %}
+
+    <h1>Install</h1>
+    <div class="well">
+        <h3>Are you sure you want to install the Web?</h3>
+        <form method="post" target="#">
+            <input type="submit" name="yes" value="yes"/>
+        </form>
+    </div>
+
+{% endblock body %}
+
+
+
+{% block scripts %}
+    {{ super() }}
+
+{% endblock scripts %}

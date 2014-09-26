@@ -35,7 +35,7 @@ class TestWebBasic:
         Check that the Index works.
         """
         ret = self.flask_app.get("/")
-        assert ret.status_code == 200
+        assert ret.status_code == 200 or ret.status_code == 302
 
     def test_index_install_redirect(self):
         pass
@@ -47,7 +47,7 @@ class TestWebBasic:
         ret = self.flask_app.get("/install")
         assert ret.status_code == 200
         assert "install" in ret.data
-        assert "button" in ret.data
+        assert "submit" in ret.data
         assert "<form" in ret.data
 
     def test_install_post(self):

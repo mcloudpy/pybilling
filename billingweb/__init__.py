@@ -48,6 +48,10 @@ def fill():
 
     return "Ok"
 
+@flask_app.route("/test/addhits")
+def addhits():
+    return render_template("add_hits.html")
+
 @flask_app.route("/test")
 def test():
     return render_template("hits_chart.html")
