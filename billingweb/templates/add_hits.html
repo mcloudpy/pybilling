@@ -14,9 +14,10 @@
     <h1>Hits Reporter</h1>
     <div class="well">
         <h3>Specify here the hits to add.</h3>
-        <form method="post" target="#">
+        <form method="post" action="#">
             <input type="text" name="datetime" value="{{ session["last_datetime"] }}" placeholder="ISO Date and Time"/>
             <input type="text" name="hits" value="5" placeholder="Number of hits"/>
+            <input type="text" name="appid" value="{{ session["last_appid"] }}" placeholder="Application ID"/>
             <input type="submit" name="add" value="Add now"/>
         </form>
     </div>

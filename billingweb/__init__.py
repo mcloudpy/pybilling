@@ -114,10 +114,19 @@ def addhits():
             flash("The number of hits must be a valid integer")
             return render_template("add_hits.html")
 
+        appid = request.values.get("appid")
+        if appid is None:
+            flash("Please, provide an application ID", "error")
+            return render_template("add_hits.html")
+        try:
+            session["last_appid"] = appid
+            appid = int(appid)
+        except:
+            flash("The Application ID must be a valid integer")
+            return render_template("add_hits.html")
+
 
         # Add the specified hits themselves.
-
-        appid = 2  # TODO: To be made dynamic in the future.
         hits = Hits(ts=isodate, hits=hits, app_id=appid)
 
         # WARNING: Doing db() only results in issues from the tests when we
