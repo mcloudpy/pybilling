@@ -1,4 +1,5 @@
-from flask import render_template
+import dateutil.parser
+from flask import render_template, request, flash, session
 
 from billingweb.flask_app_builder import build_flask_app
 from billing.models import Application, Hits
@@ -21,6 +22,7 @@ import ajax_hits
 import random
 import datetime
 
+
 @flask_app.route("/ajax/users/new/<name>")
 def create_new_user(name):
     s = db()
@@ -31,12 +33,12 @@ def create_new_user(name):
 
 
 def daterange(start_date, end_date):
-    for n in range(int ((end_date - start_date).days)):
+    for n in range(int((end_date - start_date).days)):
         yield start_date + datetime.timedelta(n)
+
 
 @flask_app.route("/test/fill")
 def fill():
-
     start_date = datetime.datetime(year=2014, month=1, day=1)
     end_date = datetime.datetime(year=2015, month=1, day=1)
     for single_date in daterange(start_date, end_date):
@@ -48,9 +50,48 @@ def fill():
 
     return "Ok"
 
-@flask_app.route("/test/addhits")
+
+@flask_app.route("/test/addhits", methods=["GET", "POST"])
 def addhits():
+    if request.method == "POST":
+
+        # Read the input.
+
+        isodate = request.values.get("datetime")
+        if isodate is None:
+            flash("Please, provide a date and time", "error")
+            return render_template("add_hits.html")
+        try:
+            session["last_datetime"] = isodate
+            isodate = dateutil.parser.parse(isodate)
+        except:
+            flash("Could not parse the date you provided", "error")
+            return render_template("add_hits.html")
+
+        hits = request.values.get("hits")
+        if hits is None:
+            flash("Please, provide the number of hits", "error")
+            return render_template("add_hits.html")
+        try:
+            hits = int(hits)
+        except:
+            flash("The number of hits must be a valid integer")
+            return render_template("add_hits.html")
+
+
+        # Add the specified hits themselves.
+
+        appid = 2  # TODO: To be made dynamic in the future.
+        hits = Hits(ts=isodate, hits=hits, app_id=appid)
+        s = db()
+        s.add(hits)
+        s.commit()
+
+        flash("The specified hits have been added", "success")
+        return render_template("add_hits.html")
+
     return render_template("add_hits.html")
+
 
 @flask_app.route("/test")
 def test():
