@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+
+{% block head %}
+    {{ super() }}
+{% endblock head %}
+
+
+
+
+{% block body %}
+
+    <h1>Application Added</h1>
+    <div class="well">
+        <h3>Register here your new applications.</h3>
+        <form method="post" target="#">
+            <input type="text" name="name" value="" placeholder="Application name"/>
+            <input type="text" name="description" value="" placeholder="Application description"/>
+            <input type="submit" name="add" value="Add now"/>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="well">
+        <h3>Application List</h3>
+        <ul>
+            {% for app in applications %}
+            <li>
+                {{ app.name }}: {{ app.id }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock body %}
+
+
+
+{% block scripts %}
+    {{ super() }}
+
+{% endblock scripts %}
