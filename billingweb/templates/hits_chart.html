@@ -26,6 +26,10 @@
     <div class="container">
         <div class="row">
             <div class="btn-group" data-toggle="buttons">
+                <form>
+                    <label>Application ID:</label>
+                    <input type="text" id="appid" name="appid" value="2" placeholder="Application ID"/>
+                </form>
                 <label class="btn btn-primary active">
                     <input type="radio" name="options" id="btn-years" checked>Years
                 </label>
@@ -66,30 +70,49 @@
 
             console.log("Chosen: " + id);
 
+            var appid = $("#appid").val();
+
             var to_date = new Date().toISOString();
 
             var from_date = null;
-            if(id == "btn-hours")
+            var granularity;
+            if(id == "btn-hours") {
+                granularity = "hourly";
                 from_date = d3.time.day.offset(new Date(), -1).toISOString();
-            else if(id == "btn-days")
+            }
+            else if(id == "btn-days") {
+                granularity = "daily";
                 from_date = d3.time.day.offset(new Date(), -7).toISOString();
-            else if(id == "btn-months")
+            }
+            else if(id == "btn-months") {
+                granularity = "monthly";
                 from_date = d3.time.day.offset(new Date(), -3*30).toISOString();
-            else if(id == "btn-years")
+            }
+            else if(id == "btn-years") {
+                granularity = "yearly";
                 from_date = d3.time.day.offset(new Date(), -12*30*3).toISOString();
+            }
 
-            DrawHitsChart(from_date, to_date)
+            DrawHitsChart(from_date, to_date, appid, granularity);
         });
 
-        function DrawHitsChart(from_date, to_date) {
+        function DrawHitsChart(from_date, to_date, appid, granularity) {
 
-            $.getJSON("{{ url_for(".hits", uid=2) }}?to=" + to_date + "&from=" + from_date + "&daily=true", function (data) {
+            {# TODO: BUILD THIS URL IN A PROPER / SAFE WAY #}
+            var url = "{{ url_for(".hits", uid="APPIDHERE") }}";
+            url = url.replace("APPIDHERE", appid);
+            granularity = "daily";
+            url = url + "?to=" + to_date + "&from=" + from_date + "&granularity=" + granularity;
+
+            console.log("The URL is: " + url);
+            $.getJSON(url, function (data) {
                 console.log("GOT: ");
                 console.log(data);
 
                 var values = [];
 
                 $.each(data, function (ind, elem) {
+
                     values.push({
                         "x": Date.parse(elem["ts"]),
                         "y": elem["hits"]

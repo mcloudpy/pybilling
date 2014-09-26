@@ -141,7 +141,7 @@ def addhits():
     return render_template("add_hits.html")
 
 
-@flask_app.route("/test")
-def test():
+@flask_app.route("/chart")
+def chart():
     return render_template("hits_chart.html")
 
