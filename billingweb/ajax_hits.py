@@ -21,17 +21,17 @@ def hits_test(uid):
     ret = [
         {
             "hits": 2,
-            "user_id": 2,
+            "app_id": 2,
             "ts": "2014-09-19T15:36:54.583331"
         },
         {
             "hits": 4,
-            "user_id": 2,
+            "app_id": 2,
             "ts": "2014-09-20T15:36:54.583331"
         },
         {
             "hits": 12,
-            "user_id": 2,
+            "app_id": 2,
             "ts": "2014-09-22T15:36:54.583331"
         }
     ]
@@ -65,14 +65,14 @@ def hits(uid):
     if request.values.get("daily") == "true":
         for h in hits:
             hits_n = h.hits
-            uid = h.user_id
+            uid = h.app_id
             ts = h.ts
             ts = datetime.datetime(year=ts.year, month=ts.month, day=ts.day)
             hits_md[ts].append({"hits": hits_n, "uid": uid})
     else:
         for h in hits:
             hits_n = h.hits
-            uid = h.user_id
+            uid = h.app_id
             ts = h.ts
             hits_md[ts].append({"hits": hits_n, "uid": uid})
 
