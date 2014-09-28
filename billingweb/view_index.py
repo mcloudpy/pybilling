@@ -3,7 +3,6 @@
 # Mostly for debugging purposes, this snippet will print the site-map so that we can check
 # which methods we are routing.
 from flask import render_template, redirect, url_for
-from markupsafe._speedups import escape
 from billingweb import flask_app
 
 import os
@@ -13,7 +12,7 @@ import os
 def site_map():
     lines = []
     for rule in flask_app.url_map.iter_rules():
-        line = str(escape(repr(rule)))
+        line = str((repr(rule)))
         lines.append(line)
 
     ret = "<br>".join(lines)

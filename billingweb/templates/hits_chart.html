@@ -78,19 +78,19 @@
             var granularity;
             if(id == "btn-hours") {
                 granularity = "hourly";
-                from_date = d3.time.day.offset(new Date(), -1).toISOString();
+                from_date = d3.time.day.offset(new Date(), -1*4).toISOString();
             }
             else if(id == "btn-days") {
                 granularity = "daily";
-                from_date = d3.time.day.offset(new Date(), -7).toISOString();
+                from_date = d3.time.day.offset(new Date(), -7*4).toISOString();
             }
             else if(id == "btn-months") {
                 granularity = "monthly";
-                from_date = d3.time.day.offset(new Date(), -3*30).toISOString();
+                from_date = d3.time.day.offset(new Date(), -3*30*6).toISOString();
             }
             else if(id == "btn-years") {
                 granularity = "yearly";
-                from_date = d3.time.day.offset(new Date(), -12*30*3).toISOString();
+                from_date = d3.time.day.offset(new Date(), -12*30*10).toISOString();
             }
 
             DrawHitsChart(from_date, to_date, appid, granularity);
@@ -101,7 +101,6 @@
             {# TODO: BUILD THIS URL IN A PROPER / SAFE WAY #}
             var url = "{{ url_for(".hits", uid="APPIDHERE") }}";
             url = url.replace("APPIDHERE", appid);
-            granularity = "daily";
             url = url + "?to=" + to_date + "&from=" + from_date + "&granularity=" + granularity;
 
             console.log("The URL is: " + url);
