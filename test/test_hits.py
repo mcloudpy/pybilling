@@ -17,7 +17,7 @@ class TestHits:
 
     def test_index(self):
         ret = self.flask_app.get("/")
-        assert ret.status_code == 200
+        assert ret.status_code == 302  # ?
 
     def test_basic_hits(self):
         ret = self.flask_app.get("/")
