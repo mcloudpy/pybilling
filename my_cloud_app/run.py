@@ -27,9 +27,9 @@ def use():
     # indistintamente.
     facturacion.report_time(20)
 
-
     flash(u"Uso realizado! Ha sido reportado con éxito al sistema de facturación.")
 
+    # Volver a la página principal de la aplicación de demo
     return redirect(url_for("index"))
 
 

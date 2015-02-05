@@ -20,4 +20,7 @@ threescale_plan_id = ''
 
 
 # For the SQLA scheme.
-DATABASE_URI = "sqlite:///database.db"
+# Example: DATABASE_URI = "sqlite:///database.db"
+
+# Example:
+DATABASE_URI = "mysql://mcloudbilling:password@localhost/foo"
