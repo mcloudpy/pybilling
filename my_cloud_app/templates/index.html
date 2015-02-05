@@ -1,0 +1,83 @@
+{# -*- coding: utf8 -*- #}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Aplicación Cloud</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="{{ url_for("static", filename="styles.css") }}"/>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="jumbotron">
+    <div class="container">
+
+        {# Muestra los mensajes Flask que haya en la cola. #}
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-success">
+            {{ message }}
+            </div>
+        {% endfor %}
+
+        <h1>Mi Aplicación Cloud</h1>
+
+        <h3>PyBilling, monitorización y facturación sencilla para Cloud</h3>
+        <a href="https://github.com/you"><img style="position: absolute; top: 0; left: 0; border: 0;"
+                                              src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67"
+                                              alt="Fork me on GitHub"
+                                              data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png"></a>
+        <img class="img-rounded" width="200px" src="{{ url_for("static", filename="img/mcloud.png") }}"/>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col col-xs-12">
+
+        <h1>Esto es una aplicación cloud de prueba</h1>
+
+            <p>Esta aplicación pretende demostrar que es fácil integrar cualquier aplicación con <strong>PyBilling</strong>,
+            de tal forma que sea posible medir el uso que se hace de dicha aplicación, ya sea mediante <strong>3scale</strong> o
+            mediante un sistema propio.</p>
+
+            <p>Para usar esta aplicación haz click en el botón. Se hará uso de <strong>mCloud PyBilling</strong> para registrar el uso, de tal
+            forma que los administradores de la aplicación puedan gestionar la información de facturación.</p>
+
+            <p>Para gestionar dicha información existen dos opciones provistas por <strong>mCloud PyBilling</strong></p>
+            <ul>
+                <li>3scale</li>
+                <li>Sistema propio</li>
+            </ul>
+
+
+            <div class="well">
+                <legend>Usar la aplicación</legend>
+                <form method="POST" action="use">
+                    <input class="btn btn-lg btn-info" id="usar" type="submit" value="Usar"/>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="footer text-center">
+    <hr>
+
+    <div>
+        <img class="logo" src="{{ url_for("static", filename="img/mec.jpg") }}"/>
+        <img class="logo" src="{{ url_for("static", filename="img/feder.png") }}"/>
+        <img class="logo" src="{{ url_for("static", filename="img/inn.jpg") }}"/>
+    </div>
+
+    El proyecto mCloud ha recibido financiación del Ministerio de Economía y Competitividad, dentro del Plan Nacional de
+    Investigación Científica, Desarrollo e Innovación Tecnológica 2008-2011 y el Fondo Europeo de Desarrollo Regional
+    (FEDER)
+</div>
+
+</body>
+</html>
